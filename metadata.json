@@ -1,0 +1,5 @@
+{
+  "name": "LuxeFashion Ecommerce",
+  "description": "A premium fashion ecommerce platform with Supabase backend and Paystack integration.",
+  "requestFramePermissions": []
+}
