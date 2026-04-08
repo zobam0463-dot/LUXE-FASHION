@@ -11,7 +11,7 @@ dotenv.config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const app = express();
+export const app = express();
 const PORT = 3000;
 
 app.use(express.json());
@@ -284,13 +284,13 @@ app.post("/api/admin/setup-storage", async (req, res) => {
 
 // Vite Middleware
 async function startServer() {
-  if (process.env.NODE_ENV !== "production") {
+  if (process.env.NODE_ENV !== "production" && !process.env.VERCEL) {
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: "spa",
     });
     app.use(vite.middlewares);
-  } else {
+  } else if (process.env.NODE_ENV === "production" && !process.env.VERCEL) {
     const distPath = path.join(process.cwd(), "dist");
     app.use(express.static(distPath));
     app.get("*", (req, res) => {
@@ -298,9 +298,13 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-  });
+  if (!process.env.VERCEL) {
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`Server running on http://localhost:${PORT}`);
+    });
+  }
 }
 
 startServer();
+
+export default app;
