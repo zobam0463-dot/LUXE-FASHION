@@ -20,10 +20,12 @@ app.use(express.json());
 let supabaseClient: any = null;
 const getSupabase = () => {
   if (!supabaseClient) {
-    const supabaseUrl = process.env.SUPABASE_URL;
-    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_SERVICE_ROLE_KEY;
+    
     if (!supabaseUrl || !supabaseServiceKey) {
-      throw new Error("SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required");
+      console.error("Missing Supabase Config:", { hasUrl: !!supabaseUrl, hasKey: !!supabaseServiceKey });
+      throw new Error("Backend Configuration Error: SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are missing in Vercel.");
     }
     supabaseClient = createClient(supabaseUrl, supabaseServiceKey);
   }
@@ -32,9 +34,9 @@ const getSupabase = () => {
 
 // Paystack Config
 const getPaystackSecret = () => {
-  const secret = process.env.PAYSTACK_SECRET_KEY;
+  const secret = process.env.PAYSTACK_SECRET_KEY || process.env.VITE_PAYSTACK_SECRET_KEY;
   if (!secret) {
-    throw new Error("PAYSTACK_SECRET_KEY is required");
+    throw new Error("Backend Configuration Error: PAYSTACK_SECRET_KEY is missing in Vercel.");
   }
   return secret;
 };

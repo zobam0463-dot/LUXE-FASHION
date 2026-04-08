@@ -25,8 +25,12 @@ function App() {
             Your ecommerce website is almost ready! Vercel requires your variables to start with <strong>VITE_</strong> to be visible to the website.
           </p>
           <div className="bg-gray-50 p-4 rounded-2xl text-left text-sm font-mono text-gray-500 mb-6">
-            Key: <span className="text-orange-600 font-bold">VITE_SUPABASE_URL</span><br />
-            Key: <span className="text-orange-600 font-bold">VITE_SUPABASE_ANON_KEY</span>
+            <p className="font-bold text-gray-900 mb-1">Frontend Keys:</p>
+            VITE_SUPABASE_URL<br />
+            VITE_SUPABASE_ANON_KEY<br /><br />
+            <p className="font-bold text-gray-900 mb-1">Backend Keys (for Payments):</p>
+            SUPABASE_SERVICE_ROLE_KEY<br />
+            PAYSTACK_SECRET_KEY
           </div>
           <p className="text-xs text-gray-400 mb-6">
             Note: After adding these in Vercel Settings, you must <strong>Redeploy</strong> your project.
