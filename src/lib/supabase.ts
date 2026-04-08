@@ -8,13 +8,28 @@ export const getSupabase = () => {
     const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
     
     if (!supabaseUrl || !supabaseAnonKey) {
-      console.warn('Supabase credentials missing. Please add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to your environment.');
-      // Return a proxy that throws on access to help debugging
-      return new Proxy({}, {
-        get: () => {
-          throw new Error('Supabase client not initialized. Check your environment variables.');
+      console.error('Supabase credentials missing! Please add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to your Vercel Environment Variables.');
+      // Return a dummy client that doesn't throw immediately but returns empty data
+      return {
+        from: () => ({
+          select: () => ({
+            order: () => ({
+              order: () => Promise.resolve({ data: [], error: null })
+            }),
+            eq: () => ({
+              single: () => Promise.resolve({ data: null, error: null })
+            })
+          }),
+          insert: () => Promise.resolve({ data: null, error: new Error('Supabase not configured') }),
+          delete: () => Promise.resolve({ data: null, error: new Error('Supabase not configured') })
+        }),
+        storage: {
+          from: () => ({
+            upload: () => Promise.resolve({ error: new Error('Supabase not configured') }),
+            getPublicUrl: () => ({ data: { publicUrl: '' } })
+          })
         }
-      });
+      } as any;
     }
     supabaseClient = createClient(supabaseUrl, supabaseAnonKey);
   }
