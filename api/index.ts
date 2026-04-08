@@ -1,10 +1,10 @@
 import express from "express";
-import { createServer as createViteServer } from "vite";
 import path from "path";
 import { fileURLToPath } from "url";
 import axios from "axios";
 import dotenv from "dotenv";
 import { createClient } from "@supabase/supabase-js";
+import multer from "multer";
 
 dotenv.config();
 
@@ -207,7 +207,6 @@ app.post("/api/paystack-webhook", async (req, res) => {
   res.sendStatus(200);
 });
 
-import multer from "multer";
 
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -285,17 +284,12 @@ app.post("/api/admin/setup-storage", async (req, res) => {
 // Vite Middleware
 async function startServer() {
   if (process.env.NODE_ENV !== "production" && !process.env.VERCEL) {
+    const { createServer: createViteServer } = await import("vite");
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: "spa",
     });
     app.use(vite.middlewares);
-  } else if (process.env.NODE_ENV === "production" && !process.env.VERCEL) {
-    const distPath = path.join(process.cwd(), "dist");
-    app.use(express.static(distPath));
-    app.get("*", (req, res) => {
-      res.sendFile(path.join(distPath, "index.html"));
-    });
   }
 
   if (!process.env.VERCEL) {
