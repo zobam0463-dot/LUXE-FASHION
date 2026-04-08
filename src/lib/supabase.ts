@@ -4,32 +4,24 @@ let supabaseClient: any = null;
 
 export const getSupabase = () => {
   if (!supabaseClient) {
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-    const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || (import.meta.env as any).SUPABASE_URL;
+    const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || (import.meta.env as any).SUPABASE_ANON_KEY;
     
     if (!supabaseUrl || !supabaseAnonKey) {
       console.error('Supabase credentials missing! Please add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to your Vercel Environment Variables.');
-      // Return a dummy client that doesn't throw immediately but returns empty data
-      return {
-        from: () => ({
-          select: () => ({
-            order: () => ({
-              order: () => Promise.resolve({ data: [], error: null })
-            }),
-            eq: () => ({
-              single: () => Promise.resolve({ data: null, error: null })
-            })
-          }),
-          insert: () => Promise.resolve({ data: null, error: new Error('Supabase not configured') }),
-          delete: () => Promise.resolve({ data: null, error: new Error('Supabase not configured') })
-        }),
-        storage: {
-          from: () => ({
-            upload: () => Promise.resolve({ error: new Error('Supabase not configured') }),
-            getPublicUrl: () => ({ data: { publicUrl: '' } })
-          })
+      
+      const dummyHandler: any = {
+        get: () => dummyHandler,
+        apply: () => dummyHandler,
+        then: (resolve: any) => resolve({ data: [], error: new Error('Supabase not configured') })
+      };
+
+      return new Proxy({}, {
+        get: (target, prop) => {
+          if (prop === 'then') return undefined;
+          return new Proxy(() => {}, dummyHandler);
         }
-      } as any;
+      }) as any;
     }
     supabaseClient = createClient(supabaseUrl, supabaseAnonKey);
   }

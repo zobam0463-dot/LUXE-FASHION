@@ -13,9 +13,10 @@ import Teams from './pages/Teams';
 import AdminDashboard from './pages/AdminDashboard';
 
 function App() {
-  const isMissingVars = !import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY;
+  const isMissingVars = (!import.meta.env.VITE_SUPABASE_URL && !(import.meta.env as any).SUPABASE_URL) || 
+                       (!import.meta.env.VITE_SUPABASE_ANON_KEY && !(import.meta.env as any).SUPABASE_ANON_KEY);
 
-  if (isMissingVars && process.env.NODE_ENV === 'production') {
+  if (isMissingVars && import.meta.env.PROD) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6">
         <div className="max-w-md w-full bg-white p-8 rounded-3xl shadow-xl border border-red-100 text-center">
