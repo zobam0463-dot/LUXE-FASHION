@@ -10,18 +10,18 @@ export const getSupabase = () => {
     if (!supabaseUrl || !supabaseAnonKey) {
       console.error('Supabase credentials missing! Please add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to your Vercel Environment Variables.');
       
-      const dummyHandler: any = {
-        get: () => dummyHandler,
-        apply: () => dummyHandler,
-        then: (resolve: any) => resolve({ data: [], error: new Error('Supabase not configured') })
+      // Return a safe proxy that logs errors instead of crashing the UI
+      const safeHandler: any = {
+        get: (target: any, prop: string) => {
+          if (prop === 'then') return undefined;
+          return (...args: any[]) => {
+            console.error(`Supabase method "${prop}" called but client is not initialized.`);
+            return Promise.resolve({ data: [], error: new Error('Supabase not configured') });
+          };
+        }
       };
 
-      return new Proxy({}, {
-        get: (target, prop) => {
-          if (prop === 'then') return undefined;
-          return new Proxy(() => {}, dummyHandler);
-        }
-      }) as any;
+      return new Proxy({}, safeHandler) as any;
     }
     supabaseClient = createClient(supabaseUrl, supabaseAnonKey);
   }
