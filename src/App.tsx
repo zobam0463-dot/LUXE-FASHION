@@ -22,12 +22,15 @@ function App() {
         <div className="max-w-md w-full bg-white p-8 rounded-3xl shadow-xl border border-red-100 text-center">
           <h1 className="text-2xl font-black text-gray-900 mb-4 uppercase">Configuration Required</h1>
           <p className="text-gray-600 mb-6">
-            Your ecommerce website is almost ready! Please add your <strong>Supabase Environment Variables</strong> in the Vercel dashboard to see your products.
+            Your ecommerce website is almost ready! Vercel requires your variables to start with <strong>VITE_</strong> to be visible to the website.
           </p>
           <div className="bg-gray-50 p-4 rounded-2xl text-left text-sm font-mono text-gray-500 mb-6">
-            VITE_SUPABASE_URL<br />
-            VITE_SUPABASE_ANON_KEY
+            Key: <span className="text-orange-600 font-bold">VITE_SUPABASE_URL</span><br />
+            Key: <span className="text-orange-600 font-bold">VITE_SUPABASE_ANON_KEY</span>
           </div>
+          <p className="text-xs text-gray-400 mb-6">
+            Note: After adding these in Vercel Settings, you must <strong>Redeploy</strong> your project.
+          </p>
           <a 
             href="https://vercel.com/dashboard" 
             target="_blank" 
